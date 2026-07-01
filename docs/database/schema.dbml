@@ -1,0 +1,312 @@
+
+Table cities {
+  id uuid [pk]
+  name varchar
+  state varchar
+  country varchar
+  timezone varchar
+  active boolean
+  created_at timestamp
+updated_at timestamp
+deleted_at timestamp [null]
+}
+
+Table organizations {
+  id uuid [pk]
+  city_id uuid [ref: > cities.id]
+
+  name varchar
+  type organization_type
+
+  active boolean
+    created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table users {
+  id uuid [pk]
+
+  name varchar
+  email varchar [unique]
+  password varchar
+  
+
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+table organization_memberships {
+  id uuid [pk]
+
+  organization_id uuid [ref: > organizations.id]
+
+  user_id uuid [ref: > users.id]
+
+  role user_role
+
+    created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table vehicles {
+  id uuid [pk]
+
+  owner_id uuid [ref: > users.id, null]
+  nickname varchar [null]
+  plate varchar [unique]
+  brand varchar [null]
+  model varchar [null]
+  color varchar [null]
+
+    created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+// ============================================================
+// Parking
+// ============================================================
+
+Table parking_zones {
+  id uuid [pk]
+
+  organization_id uuid [ref: > organizations.id]
+
+  display_name varchar
+  display_address varchar
+  geometry geometry
+  operation_mode operation_mode
+
+  active boolean
+    created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table parking_spots {
+  id uuid [pk]
+
+  parking_zone_id uuid [ref: > parking_zones.id]
+
+  identifier varchar
+  spot_type parking_spot_type
+  status parking_spot_status
+  geometry geometry [null]
+  sensor_id uuid [null]
+
+    created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+// ============================================================
+// Pricing
+// ============================================================
+
+Table pricing_rules {
+  id uuid [pk]
+
+  parking_zone_id uuid [ref: > parking_zones.id]
+
+  name varchar
+  vehicle_category vehicle_category [null]
+  priority int
+  strategy pricing_strategy
+  active boolean
+
+    created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+Table pricing_periods {
+  id uuid [pk]
+
+  pricing_rule_id uuid [ref: > pricing_rules.id]
+
+  weekday weekday
+  start_time time
+  end_time time
+  price_per_hour decimal
+  price_per_day decimal
+  max_daily_price decimal [null]
+  free_minutes int [null]
+
+    created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp [null]
+}
+
+// ============================================================
+// Sessions
+// ============================================================
+
+Table tickets {
+  id uuid [pk]
+
+  parking_spot_id uuid [ref: > parking_spots.id]
+  vehicle_id uuid [ref: > vehicles.id]
+  created_by uuid [ref: > users.id]
+
+  creator_type ticket_creator_type
+  status ticket_status
+
+  scheduled_at timestamp [null]
+  started_at timestamp [null]
+  ended_at timestamp [null]
+
+  calculated_amount decimal(10,2) [null]
+
+  created_at timestamp
+  updated_at timestamp
+}
+
+// ============================================================
+// Financial
+// ============================================================
+
+Table payments {
+  id uuid [pk]
+
+  ticket_id uuid [ref: > tickets.id]
+
+  method payment_method
+  status payment_status
+  amount decimal(10,2)
+  provider_reference varchar [null]
+  paid_at timestamp [null]
+  failure_reason varchar [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table wallets {
+  id uuid [pk]
+
+  user_id uuid [ref: > users.id]
+
+  active boolean
+
+  created_at timestamp
+  updated_at timestamp
+  deleted_at timestamp
+}
+
+Table wallet_transactions {
+  id uuid [pk]
+
+  wallet_id uuid [ref: > wallets.id]
+  payment_id uuid [ref: > payments.id, null]
+
+  type transaction_type
+  amount decimal(10,2)
+
+  created_at timestamp
+}
+
+// ============================================================
+// Enums
+// ============================================================
+
+Enum organization_type {
+  GOVERNMENT
+  PRIVATE
+}
+
+Enum operation_mode {
+  SELF_SERVICE
+  OPERATOR
+  HYBRID
+}
+
+Enum parking_spot_type {
+  STANDARD
+  DISABLED
+  ELECTRIC
+  MOTORCYCLE
+  VIP
+}
+
+Enum parking_spot_status {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  OUT_OF_SERVICE
+  DISABLED
+}
+
+Enum weekday {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+Enum ticket_status {
+  ACTIVE
+  FINISHED
+  SCHEDULED
+  CANCELLED
+}
+
+Enum ticket_creator_type {
+
+  APP
+
+  OPERATOR
+
+  SYSTEM
+
+  API
+}
+
+Enum payment_method {
+  WALLET
+  CREDIT_CARD
+  PIX
+  CASH
+}
+
+Enum payment_status {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+Enum transaction_type {
+  CREDIT
+  DEBIT
+  REFUND
+}
+
+Enum user_role {
+  OPERATOR
+  ADMIN
+}
+
+Enum vehicle_category {
+  PRIVATE
+  VAN
+  BUS
+}
+
+Enum pricing_strategy {
+  HOURLY
+
+DAILY
+
+WEEKEND
+
+NIGHT
+
+HOLIDAY
+
+CUSTOM
+}
