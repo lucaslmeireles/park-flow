@@ -36,7 +36,6 @@ If a Parking Spot must belong to another Parking Zone, a new Parking Spot must b
 
 Parking Zone capacity is derived from the number of Parking Spots.
 
-Capacity is never stored manually.
 
 ---
 

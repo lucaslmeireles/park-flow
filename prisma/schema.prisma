@@ -1,0 +1,471 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ======================================================
+// ENUMS
+// ======================================================
+
+enum OrganizationType {
+  GOVERNMENT
+  PRIVATE
+}
+
+enum OperationMode {
+  SELF_SERVICE
+  OPERATOR
+  HYBRID
+}
+
+enum ParkingSpotType {
+  STANDARD
+  DISABLED
+  ELECTRIC
+  MOTORCYCLE
+  VIP
+}
+
+enum ParkingSpotStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  OUT_OF_SERVICE
+  DISABLED
+}
+
+enum Weekday {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum TicketStatus {
+  ACTIVE
+  FINISHED
+  SCHEDULED
+  CANCELLED
+}
+
+enum TicketCreatorType {
+  DRIVER
+  OPERATOR
+  SENSOR
+  LPR
+}
+
+enum PaymentMethod {
+  WALLET
+  CREDIT_CARD
+  PIX
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  REFUND
+}
+
+enum UserRole {
+  OPERATOR
+  ADMIN
+}
+
+enum VehicleCategory {
+  PRIVATE
+  VAN
+  BUS
+}
+
+enum PricingStrategy {
+  HOURLY
+  DAILY
+  WEEKEND
+  NIGHT
+  HOLIDAY
+  CUSTOM
+}
+
+// ======================================================
+// IDENTITY
+// ======================================================
+
+model City {
+  id       String  @id @default(uuid()) @db.Uuid
+  name     String
+  state    String
+  country  String
+  timezone String
+  active   Boolean
+
+  organizations Organization[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("cities")
+}
+
+model User {
+  id       String @id @default(uuid()) @db.Uuid
+  name     String
+  email    String @unique
+  password String
+
+  memberships OrganizationMembership[]
+
+  vehicles Vehicle[]
+
+  wallet Wallet?
+
+  createdTickets Ticket[] @relation("TicketCreator")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("users")
+}
+
+model Organization {
+  id String @id @default(uuid()) @db.Uuid
+
+  cityId String @map("city_id") @db.Uuid
+
+  city City @relation(fields: [cityId], references: [id])
+
+  name String
+
+  type OrganizationType
+
+  active Boolean
+
+  parkingZones ParkingZone[]
+
+  memberships OrganizationMembership[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([cityId])
+  @@map("organizations")
+}
+
+model OrganizationMembership {
+  id String @id @default(uuid()) @db.Uuid
+
+  organizationId String @map("organization_id") @db.Uuid
+  userId         String @map("user_id") @db.Uuid
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  user User @relation(fields: [userId], references: [id])
+
+  role UserRole
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([organizationId, userId])
+  @@map("organization_memberships")
+}
+
+model Vehicle {
+  id String @id @default(uuid()) @db.Uuid
+
+  ownerId String? @map("owner_id") @db.Uuid
+
+  owner User? @relation(fields: [ownerId], references: [id])
+
+  nickname String?
+
+  plate String @unique
+
+  category VehicleCategory
+
+  brand String?
+
+  model String?
+
+  color String?
+
+  tickets Ticket[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([ownerId])
+  @@map("vehicles")
+}
+
+// ======================================================
+// PARKING
+// ======================================================
+
+model ParkingZone {
+  id String @id @default(uuid()) @db.Uuid
+
+  organizationId String @map("organization_id") @db.Uuid
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  displayName String @map("display_name")
+
+  displayAddress String @map("display_address")
+
+  geometry Unsupported("geometry")
+
+  operationMode OperationMode @map("operation_mode")
+
+  active Boolean
+
+  parkingSpots ParkingSpot[]
+
+  pricingRules PricingRule[]
+
+  capacity Int
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([organizationId])
+  @@map("parking_zones")
+}
+
+model ParkingSpot {
+  id String @id @default(uuid()) @db.Uuid
+
+  parkingZoneId String @map("parking_zone_id") @db.Uuid
+
+  parkingZone ParkingZone @relation(fields: [parkingZoneId], references: [id])
+
+  identifier String
+
+  spotType ParkingSpotType @map("spot_type")
+
+  status ParkingSpotStatus
+
+  geometry Unsupported("geometry")?
+
+  sensorId String? @map("sensor_id") @db.Uuid
+
+  tickets Ticket[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@unique([parkingZoneId, identifier])
+  @@index([parkingZoneId, status])
+  @@index([parkingZoneId])
+  @@index([status])
+  @@map("parking_spots")
+}
+
+// ======================================================
+// PRICING
+// ======================================================
+
+model PricingRule {
+  id String @id @default(uuid()) @db.Uuid
+
+  parkingZoneId String @map("parking_zone_id") @db.Uuid
+
+  parkingZone ParkingZone @relation(fields: [parkingZoneId], references: [id])
+
+  name String
+
+  vehicleCategory VehicleCategory? @map("vehicle_category")
+
+  priority Int
+
+  strategy PricingStrategy
+
+  active Boolean
+
+  pricingPeriods PricingPeriod[]
+
+  effectiveFrom DateTime
+
+  effectiveUntil DateTime?
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  tickets   Ticket[]
+
+  @@index([parkingZoneId])
+  @@map("pricing_rules")
+}
+
+model PricingPeriod {
+  id String @id @default(uuid()) @db.Uuid
+
+  pricingRuleId String @map("pricing_rule_id") @db.Uuid
+
+  pricingRule PricingRule @relation(fields: [pricingRuleId], references: [id])
+
+  weekday Weekday
+
+  startTime DateTime @map("start_time") @db.Time(0)
+
+  endTime DateTime @map("end_time") @db.Time(0)
+
+  pricePerHour Decimal @map("price_per_hour") @db.Decimal(10, 2)
+
+  pricePerDay Decimal @map("price_per_day") @db.Decimal(10, 2)
+
+  maxDailyPrice Decimal? @map("max_daily_price") @db.Decimal(10, 2)
+
+  freeMinutes Int? @map("free_minutes")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([pricingRuleId])
+  @@map("pricing_periods")
+}
+
+// ======================================================
+// SESSIONS
+// ======================================================
+
+model Ticket {
+  id String @id @default(uuid()) @db.Uuid
+
+  parkingSpotId String @map("parking_spot_id") @db.Uuid
+
+  vehicleId String @map("vehicle_id") @db.Uuid
+
+  createdById String @map("created_by") @db.Uuid
+
+  parkingSpot ParkingSpot @relation(fields: [parkingSpotId], references: [id])
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
+
+  createdBy User @relation("TicketCreator", fields: [createdById], references: [id])
+
+  creatorType TicketCreatorType @map("creator_type")
+
+  status TicketStatus
+
+  scheduledAt DateTime? @map("scheduled_at")
+
+  startedAt DateTime? @map("started_at")
+
+  endedAt DateTime? @map("ended_at")
+
+  calculatedAmount Decimal? @map("calculated_amount") @db.Decimal(10, 2)
+
+  pricingRuleId String?
+
+  pricingRule PricingRule? @relation(fields: [pricingRuleId], references: [id])
+
+  payment Payment?
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([parkingSpotId])
+  @@index([vehicleId])
+  @@index([status])
+  @@map("tickets")
+}
+
+// ======================================================
+// FINANCIAL
+// ======================================================
+
+model Payment {
+  id String @id @default(uuid()) @db.Uuid
+
+  ticketId String @unique @map("ticket_id") @db.Uuid
+
+  ticket Ticket @relation(fields: [ticketId], references: [id])
+
+  method PaymentMethod
+
+  status PaymentStatus
+
+  amount Decimal @db.Decimal(10, 2)
+
+  providerReference String? @map("provider_reference")
+
+  failureReason String? @map("failure_reason")
+
+  paidAt DateTime? @map("paid_at")
+
+  walletTransactions WalletTransaction[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("payments")
+}
+
+model Wallet {
+  id String @id @default(uuid()) @db.Uuid
+
+  userId String @unique @map("user_id") @db.Uuid
+
+  user User @relation(fields: [userId], references: [id])
+
+  active Boolean
+
+  transactions WalletTransaction[]
+
+  balance Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("wallets")
+}
+
+model WalletTransaction {
+  id String @id @default(uuid()) @db.Uuid
+
+  walletId String @map("wallet_id") @db.Uuid
+
+  paymentId String? @map("payment_id") @db.Uuid
+
+  wallet Wallet @relation(fields: [walletId], references: [id])
+
+  payment Payment? @relation(fields: [paymentId], references: [id])
+
+  type TransactionType
+
+  amount Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([walletId])
+  @@map("wallet_transactions")
+}
