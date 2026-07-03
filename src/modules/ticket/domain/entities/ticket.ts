@@ -1,5 +1,5 @@
+import { TicketStatus } from 'src/generated/prisma/enums';
 import { Entity } from 'src/shared/domain/entity';
-import { TicketStatus } from '@prisma/client';
 
 interface TicketProps {
   parkingSpotId: string;

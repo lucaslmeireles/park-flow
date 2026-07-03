@@ -22,12 +22,12 @@ import { PrismaTicketRepository } from './infrastructure/repositories/prisma-tic
 
     // Repository Implementation
     {
-      provide: TicketRepository,
+      provide: 'TicketRepository',
       useClass: PrismaTicketRepository,
     },
 
     // Infrastructure
   ],
-  exports: [TickerRepository],
+  exports: ['TicketRepository'],
 })
-export class VehicleModule {}
+export class TicketModule {}

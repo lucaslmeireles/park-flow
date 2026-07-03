@@ -1,6 +1,6 @@
-import { Entity } from '@/shared/domain/entity';
+import { VehicleCategory } from 'src/generated/prisma/enums';
 import { LicensePlate } from '../value-objects/license-plate';
-import { VehicleCategory } from '@prisma/client';
+import { Entity } from 'src/shared/domain/entity';
 
 interface VehicleProps {
   plate: LicensePlate;

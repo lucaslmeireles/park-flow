@@ -1,5 +1,5 @@
-import { VehicleCategory } from '@prisma/client';
 import { IsString, IsEnum, IsOptional } from 'class-validator';
+import { VehicleCategory } from 'src/generated/prisma/enums';
 
 /**
  * RegisterVehicleRequest DTO

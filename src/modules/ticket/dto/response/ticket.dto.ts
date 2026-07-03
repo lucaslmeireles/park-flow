@@ -1,7 +1,5 @@
-import { VehicleCategory } from '@prisma/client';
-
 /**
- * VehicleResponse DTO
+ * TicketResponse DTO
  * HTTP Response contract - represents the Vehicle to the client
  * Contains only the information the API should expose
  */

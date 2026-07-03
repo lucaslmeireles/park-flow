@@ -1,4 +1,4 @@
-import { VehicleCategory } from '@prisma/client';
+import { VehicleCategory } from 'src/generated/prisma/enums';
 
 /**
  * VehicleResponse DTO

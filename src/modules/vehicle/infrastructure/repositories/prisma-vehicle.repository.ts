@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { VehicleRepository } from '../../domain/repositories/vehicle.repository';
 import { Vehicle } from '../../domain/entities/vehicle';
 import { LicensePlate } from '../../domain/value-objects/license-plate';
@@ -26,8 +25,8 @@ export class PrismaVehicleRepository implements VehicleRepository {
         model: props.model,
         color: props.color,
         nickname: props.nickname,
-        owner_id: props.ownerId,
-        updated_at: props.updatedAt,
+        ownerId: props.ownerId,
+        updatedAt: props.updatedAt,
       },
       create: {
         id: vehicle.getId(),
@@ -37,9 +36,9 @@ export class PrismaVehicleRepository implements VehicleRepository {
         model: props.model,
         color: props.color,
         nickname: props.nickname,
-        owner_id: props.ownerId,
-        created_at: props.createdAt,
-        updated_at: props.updatedAt,
+        ownerId: props.ownerId,
+        createdAt: props.createdAt,
+        updatedAt: props.updatedAt,
       },
     });
   }
@@ -49,7 +48,7 @@ export class PrismaVehicleRepository implements VehicleRepository {
       where: { id },
     });
 
-    if (!data || data.deleted_at) {
+    if (!data || data.deletedAt) {
       return null;
     }
 
@@ -61,7 +60,7 @@ export class PrismaVehicleRepository implements VehicleRepository {
       where: { plate },
     });
 
-    if (!data || data.deleted_at) {
+    if (!data || data.deletedAt) {
       return null;
     }
 
@@ -71,8 +70,8 @@ export class PrismaVehicleRepository implements VehicleRepository {
   async findByOwnerId(ownerId: string): Promise<Vehicle[]> {
     const data = await this.prisma.vehicle.findMany({
       where: {
-        owner_id: ownerId,
-        deleted_at: null,
+        ownerId: ownerId,
+        deletedAt: null,
       },
     });
 
@@ -83,7 +82,7 @@ export class PrismaVehicleRepository implements VehicleRepository {
     const count = await this.prisma.vehicle.count({
       where: {
         plate,
-        deleted_at: null,
+        deletedAt: null,
       },
     });
 
@@ -93,7 +92,7 @@ export class PrismaVehicleRepository implements VehicleRepository {
   async delete(id: string): Promise<void> {
     await this.prisma.vehicle.update({
       where: { id },
-      data: { deleted_at: new Date() },
+      data: { deletedAt: new Date() },
     });
   }
 

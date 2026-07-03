@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TicketRepository } from '../../domain/repositories/ticket.repository';
 import { Ticket } from '../../domain/entities/ticket';
 import { PrismaService } from 'src/config/database/prisma.service';
-import { TicketStatus } from '@prisma/client';
+import { TicketCreatorType, TicketStatus } from 'src/generated/prisma/enums';
 
 /**
  * PrismaTicketRepository
@@ -33,12 +33,14 @@ export class PrismaTicketRepository implements TicketRepository {
         id: ticket.getId(),
         parkingSpotId: props.parkingSpotId,
         vehicleId: props.vehicleId,
-        status: props.status,
+        status: props.status ?? TicketStatus.ACTIVE,
         startedAt: props.startedAt,
         endedAt: props.endedAt,
         pricingRuleId: props.pricingRuleId,
         scheduledAt: props.scheduledAt,
         createdAt: props.createdAt ?? new Date(),
+        createdById: '',
+        creatorType: TicketCreatorType.SENSOR,
       },
     });
   }

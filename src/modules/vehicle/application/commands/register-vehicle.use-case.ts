@@ -1,13 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-import { VehicleRepository } from '../../domain/repositories/vehicle.repository';
+import type { VehicleRepository } from '../../domain/repositories/vehicle.repository';
 import { Vehicle } from '../../domain/entities/vehicle';
 import { LicensePlate } from '../../domain/value-objects/license-plate';
 import {
   VehiclePlateAlreadyExistsException,
   VehicleException,
 } from '../../domain/exceptions/vehicle.exception';
-import { VehicleCategory } from '@prisma/client';
+import { VehicleCategory } from 'src/generated/prisma/enums';
 
 /**
  * RegisterVehicleCommand
@@ -40,7 +40,10 @@ export class RegisterVehicleCommand {
  */
 @Injectable()
 export class RegisterVehicleUseCase {
-  constructor(private vehicleRepository: VehicleRepository) {}
+  constructor(
+    @Inject('VehicleRepository')
+    private vehicleRepository: VehicleRepository,
+  ) {}
 
   async execute(command: RegisterVehicleCommand): Promise<string> {
     // 1. Create the license plate value object (this validates the format)

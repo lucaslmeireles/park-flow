@@ -1,4 +1,4 @@
-import { ValueObject } from '@/shared/domain/value-object';
+import { ValueObject } from 'src/shared/domain/value-object';
 
 /**
  * LicensePlate Value Object

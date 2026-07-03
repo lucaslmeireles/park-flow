@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { VehicleController } from './presentation/controllers/vehicle.controller';
 import { RegisterVehicleUseCase } from './application/commands/register-vehicle.use-case';
 import { FindVehicleByIdUseCase } from './application/queries/find-vehicle-by-id.use-case';
-import { VehicleRepository } from './domain/repositories/vehicle.repository';
 import { PrismaVehicleRepository } from './infrastructure/repositories/prisma-vehicle.repository';
 
 /**
@@ -26,16 +24,10 @@ import { PrismaVehicleRepository } from './infrastructure/repositories/prisma-ve
 
     // Repository Implementation
     {
-      provide: VehicleRepository,
+      provide: 'VehicleRepository',
       useClass: PrismaVehicleRepository,
     },
-
-    // Infrastructure
-    {
-      provide: PrismaClient,
-      useValue: new PrismaClient(),
-    },
   ],
-  exports: [VehicleRepository],
+  exports: ['VehicleRepository'],
 })
 export class VehicleModule {}

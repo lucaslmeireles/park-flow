@@ -5,6 +5,7 @@
 
 generator client {
   provider        = "prisma-client"
+  moduleFormat    = "cjs"
   output          = "../src/generated/prisma"
   previewFeatures = ["postgresqlExtensions"]
 }

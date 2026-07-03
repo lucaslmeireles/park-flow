@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { VehicleRepository } from '../../domain/repositories/vehicle.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import type { VehicleRepository } from '../../domain/repositories/vehicle.repository';
 import { Vehicle } from '../../domain/entities/vehicle';
 import { VehicleNotFoundException } from '../../domain/exceptions/vehicle.exception';
 
@@ -11,7 +11,10 @@ import { VehicleNotFoundException } from '../../domain/exceptions/vehicle.except
  */
 @Injectable()
 export class FindVehicleByIdUseCase {
-  constructor(private vehicleRepository: VehicleRepository) {}
+  constructor(
+    @Inject('VehicleRepository')
+    private vehicleRepository: VehicleRepository,
+  ) {}
 
   async execute(vehicleId: string): Promise<Vehicle> {
     const vehicle = await this.vehicleRepository.findById(vehicleId);

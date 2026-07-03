@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { TicketRepository } from '../../domain/repositories/ticket.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import type { TicketRepository } from '../../domain/repositories/ticket.repository';
 import { Ticket } from '../../domain/entities/ticket';
-import { TicketStatus } from '@prisma/client';
+
 import {
   ParkingSpotHasActiveTicketException,
   VehicleHasActiveTicketException,
 } from '../../domain/exceptions/ticket.exception';
+import { TicketStatus } from 'src/generated/prisma/enums';
 
 /**
  * CreateTicketCommand
@@ -38,7 +39,10 @@ export class CreateTicketCommand {
  */
 @Injectable()
 export class CreateTicketUseCase {
-  constructor(private ticketRepository: TicketRepository) {}
+  constructor(
+    @Inject('TicketRepository')
+    private ticketRepository: TicketRepository,
+  ) {}
 
   async execute(command: CreateTicketCommand): Promise<string> {
     const id = crypto.randomUUID();
