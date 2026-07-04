@@ -1,12 +1,15 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { RegisterUserRequestDto } from '../../dto/request/registeruser.dto';
-import { RegisterUserResponse } from '../../dto/response/registeruser.dto';
+import { RegisterUserResponse } from '../../dto/response/user.dto';
 
 import { v4 as uuid } from 'uuid';
-import { RegisterUserCommand } from '../../application/commands/register-user.usecase';
+import {
+  RegisterUserCommand,
+  RegisterUserUseCase,
+} from '../../application/commands/register-user.usecase';
 @Controller('auth')
 export class AuthController {
-  constructor(private registerUserUseCase: ) {}
+  constructor(private registerUserUseCase: RegisterUserUseCase) {}
   @Post('register')
   async register(
     @Body() dto: RegisterUserRequestDto,
