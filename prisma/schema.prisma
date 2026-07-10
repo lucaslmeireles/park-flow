@@ -240,7 +240,7 @@ model ParkingZone {
 
   displayAddress String @map("display_address")
 
-  geometry Unsupported("geometry")
+  geometry Unsupported("geometry")?
 
   operationMode OperationMode @map("operation_mode")
 
@@ -386,7 +386,7 @@ model Ticket {
 
   calculatedAmount Decimal? @map("calculated_amount") @db.Decimal(10, 2)
 
-  pricingRuleId String?
+  pricingRuleId String? @db.Uuid
 
   pricingRule PricingRule? @relation(fields: [pricingRuleId], references: [id])
 
