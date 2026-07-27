@@ -77,4 +77,8 @@ export class ParkingZone extends Entity<ParkingZoneProps> {
       updatedAt: this.getUpdatedAt(),
     };
   }
+
+  isActive(): boolean {
+    return this.active && !this.deletedAt;
+  }
 }

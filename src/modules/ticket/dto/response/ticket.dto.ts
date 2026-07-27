@@ -44,3 +44,13 @@ export class CreateTicketResponse {
     this.message = `Ticket created successfully with ID: ${id}`;
   }
 }
+
+export class FinishTicketResponse {
+  id: string;
+  message: string;
+
+  constructor(id: string, endendAt: Date) {
+    this.id = id;
+    this.message = `Ticket finish at ${endendAt} with ID: ${id}`;
+  }
+}

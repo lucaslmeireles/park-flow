@@ -11,7 +11,7 @@ export interface OrganizationMembershipRepository {
     role: UserRole,
   ): Promise<OrganizationMembership[]>;
 
-  findByUserId(id: string): Promise<OrganizationMembership>;
+  findByUserId(id: string): Promise<OrganizationMembership | null>;
 
   delete(id: string): Promise<void>;
 }

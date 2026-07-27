@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TicketController } from './presentation/controllers/ticket.controller';
 import { CreateTicketUseCase } from './application/commands/create-ticket-use-case';
 import { PrismaTicketRepository } from './infrastructure/repositories/prisma-ticket.repository';
+import { OrganizationModule } from '../organization/organization.module';
+import { FinishTicketUseCase } from './application/commands/finish-ticket.usecase';
 
 /**
  * VehicleModule
@@ -15,10 +17,12 @@ import { PrismaTicketRepository } from './infrastructure/repositories/prisma-tic
  * This module is self-contained and can be imported into the main app module
  */
 @Module({
+  imports: [OrganizationModule],
   controllers: [TicketController],
   providers: [
     // Use Cases
     CreateTicketUseCase,
+    FinishTicketUseCase,
 
     // Repository Implementation
     {

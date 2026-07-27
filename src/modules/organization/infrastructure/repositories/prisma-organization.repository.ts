@@ -24,7 +24,6 @@ export class PrismaOrganizationRepository implements OrganizationRepository {
         active: props.active,
         type: props.type,
         createdAt: new Date(),
-        cityId: props.cityId,
       },
     });
   }
@@ -39,14 +38,6 @@ export class PrismaOrganizationRepository implements OrganizationRepository {
     }
 
     return this.toDomain(data);
-  }
-
-  async findByCityId(cityId: string): Promise<Organization[]> {
-    const data = await this.prisma.organization.findMany({
-      where: { cityId, deletedAt: null },
-    });
-
-    return data.map((org) => this.toDomain(org));
   }
 
   async findByType(type: OrganizationType): Promise<Organization[]> {
@@ -66,7 +57,6 @@ export class PrismaOrganizationRepository implements OrganizationRepository {
   private toDomain(data: any): Organization {
     return Organization.reconstruct(data.id, {
       name: data.name,
-      cityId: data.cityId,
       type: data.type,
       active: data.active,
       createdAt: data.createdAt,

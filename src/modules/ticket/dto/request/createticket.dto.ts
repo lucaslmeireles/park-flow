@@ -14,6 +14,6 @@ export class CreateTicketRequest {
   @IsUUID()
   vehicleId: string;
 
-  @IsDateString()
-  startedAt: string;
+  @IsDateString({ strict: true })
+  startedAt: Date;
 }

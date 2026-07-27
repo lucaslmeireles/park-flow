@@ -1,10 +1,12 @@
-import { TicketStatus } from 'src/generated/prisma/enums';
+import { TicketCreatorType, TicketStatus } from 'src/generated/prisma/enums';
 import { Entity } from 'src/shared/domain/entity';
 
 interface TicketProps {
   parkingSpotId: string;
   vehicleId: string;
   status?: TicketStatus;
+  createdById: string;
+  creatorType?: TicketCreatorType;
   createdAt?: Date;
   updatedAt?: Date;
   startedAt?: Date;
@@ -24,6 +26,8 @@ export class Ticket extends Entity<TicketProps> {
   private parkingSpotId: string;
   private vehicleId: string;
   private status: TicketStatus;
+  private createdById: string;
+  private creatorType: TicketCreatorType;
   private startedAt?: Date;
   private endedAt?: Date;
   private pricingRuleId?: string;
@@ -34,6 +38,8 @@ export class Ticket extends Entity<TicketProps> {
     this.parkingSpotId = props.parkingSpotId;
     this.vehicleId = props.vehicleId;
     this.status = props.status ?? TicketStatus.ACTIVE;
+    this.createdById = props.createdById;
+    this.creatorType = props.creatorType ?? TicketCreatorType.DRIVER;
     this.startedAt = props.startedAt;
     this.endedAt = props.endedAt;
     this.pricingRuleId = props.pricingRuleId;
@@ -78,6 +84,14 @@ export class Ticket extends Entity<TicketProps> {
 
   getScheduledAt(): Date | undefined {
     return this.scheduledAt;
+  }
+
+  getCreatedById(): string {
+    return this.createdById;
+  }
+
+  getCreatorType(): TicketCreatorType {
+    return this.creatorType;
   }
 
   updateDetails(details: Partial<TicketProps>): void {
@@ -136,6 +150,8 @@ export class Ticket extends Entity<TicketProps> {
       parkingSpotId: this.parkingSpotId,
       vehicleId: this.vehicleId,
       status: this.status,
+      createdById: this.createdById,
+      creatorType: this.creatorType,
       startedAt: this.startedAt,
       endedAt: this.endedAt,
       pricingRuleId: this.pricingRuleId,

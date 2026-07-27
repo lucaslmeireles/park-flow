@@ -17,7 +17,7 @@ export class PrismaTicketRepository implements TicketRepository {
 
   async save(ticket: Ticket): Promise<void> {
     const props = ticket.getProps();
-
+    console.log('EM REPOSITORY', ticket.getId());
     await this.prisma.ticket.upsert({
       where: { id: ticket.getId() },
       update: {
@@ -26,7 +26,7 @@ export class PrismaTicketRepository implements TicketRepository {
         status: props.status,
         startedAt: props.startedAt,
         endedAt: props.endedAt,
-        pricingRuleId: props.pricingRuleId,
+        // pricingRuleId: props.pricingRuleId,
         scheduledAt: props.scheduledAt,
       },
       create: {
@@ -36,11 +36,11 @@ export class PrismaTicketRepository implements TicketRepository {
         status: props.status ?? TicketStatus.ACTIVE,
         startedAt: props.startedAt,
         endedAt: props.endedAt,
-        pricingRuleId: props.pricingRuleId,
+        // pricingRuleId: props.pricingRuleId,
         scheduledAt: props.scheduledAt,
         createdAt: props.createdAt ?? new Date(),
-        createdById: '',
-        creatorType: TicketCreatorType.SENSOR,
+        createdById: props.createdById,
+        creatorType: props.creatorType ?? TicketCreatorType.SENSOR,
       },
     });
   }
@@ -118,6 +118,8 @@ export class PrismaTicketRepository implements TicketRepository {
       parkingSpotId: data.parkingSpotId,
       vehicleId: data.vehicleId,
       status: data.status,
+      createdById: data.createdById,
+      creatorType: data.creatorType,
       startedAt: data.startedAt,
       endedAt: data.endedAt,
       pricingRuleId: data.pricingRuleId,

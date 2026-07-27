@@ -6,8 +6,6 @@ export interface OrganizationRepository {
 
   findById(id: string): Promise<Organization | null>;
 
-  findByCityId(cityId: string): Promise<Organization[]>;
-
   findByType(type: OrganizationType): Promise<Organization[]>;
 
   delete(id: string): Promise<void>;

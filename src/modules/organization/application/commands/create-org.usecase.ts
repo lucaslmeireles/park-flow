@@ -6,10 +6,8 @@ import { v4 as uuid } from 'uuid';
 export class CreateOrganizationCommand {
   constructor(
     public readonly name: string,
-    public readonly cityId: string,
     public readonly type: OrganizationType,
     public readonly active: boolean,
-    public readonly deletedAt?: Date,
   ) {}
 }
 
@@ -26,8 +24,6 @@ export class CreateOrganizationUseCase {
       command.name,
       command.active,
       command.type,
-      command.cityId,
-      { deletedAt: command.deletedAt },
     );
 
     await this.organizationRepository.save(organization);

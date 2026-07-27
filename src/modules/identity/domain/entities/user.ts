@@ -60,6 +60,11 @@ export class User extends Entity<UserProps> {
   getEmail(): string {
     return this.email;
   }
+
+  getPassword(): string {
+    return this.password;
+  }
+
   // ===== Business Logic =====
 
   /**

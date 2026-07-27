@@ -113,22 +113,22 @@ enum PricingStrategy {
 // IDENTITY
 // ======================================================
 
-model City {
-  id       String  @id @default(uuid()) @db.Uuid
-  name     String
-  state    String
-  country  String
-  timezone String
-  active   Boolean
+// model City {
+//   id       String  @id @default(uuid()) @db.Uuid
+//   name     String
+//   state    String
+//   country  String
+//   timezone String
+//   active   Boolean
 
-  organizations Organization[]
+//   organizations Organization[]
 
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+//   createdAt DateTime  @default(now()) @map("created_at")
+//   updatedAt DateTime  @updatedAt @map("updated_at")
+//   deletedAt DateTime? @map("deleted_at")
 
-  @@map("cities")
-}
+//   @@map("cities")
+// }
 
 model User {
   id       String @id @default(uuid()) @db.Uuid
@@ -154,10 +154,6 @@ model User {
 model Organization {
   id String @id @default(uuid()) @db.Uuid
 
-  cityId String @map("city_id") @db.Uuid
-
-  city City @relation(fields: [cityId], references: [id])
-
   name String
 
   type OrganizationType
@@ -172,7 +168,6 @@ model Organization {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  @@index([cityId])
   @@map("organizations")
 }
 

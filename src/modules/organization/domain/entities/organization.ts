@@ -3,7 +3,6 @@ import { Entity } from 'src/shared/domain/entity';
 
 interface OrganizationProps {
   name: string;
-  cityId: string;
   type: OrganizationType;
   active: boolean;
   createdAt?: Date;
@@ -13,14 +12,12 @@ interface OrganizationProps {
 
 export class Organization extends Entity<OrganizationProps> {
   private name;
-  private cityId;
   private type;
   private active;
   private deletedAt?: Date;
   constructor(id: string, props: OrganizationProps) {
     super(id, props.createdAt, props.updatedAt);
     this.name = props.name;
-    this.cityId = props.cityId;
     this.type = props.type;
     this.active = props.active;
     this.deletedAt = props.deletedAt;
@@ -31,14 +28,12 @@ export class Organization extends Entity<OrganizationProps> {
     name: string,
     active: boolean,
     type: OrganizationType,
-    cityId: string,
     props?: Partial<OrganizationProps>,
   ): Organization {
     return new Organization(id, {
       name,
       active,
       type,
-      cityId,
       ...props,
     });
   }
@@ -58,12 +53,15 @@ export class Organization extends Entity<OrganizationProps> {
   getProps(): OrganizationProps {
     return {
       name: this.name,
-      cityId: this.cityId,
       type: this.type,
       active: this.active,
       deletedAt: this.deletedAt,
       createdAt: this.getCreatedAt(),
       updatedAt: this.getUpdatedAt(),
     };
+  }
+
+  isActive(): boolean {
+    return this.active && !this.deletedAt;
   }
 }

@@ -36,6 +36,13 @@ export class TicketAlreadyClosedException extends TicketException {
   }
 }
 
+export class TicketForbiddenException extends TicketException {
+  constructor(id: string) {
+    super(`User is not authorized to finish ticket "${id}"`);
+    this.name = 'TicketForbiddenException';
+  }
+}
+
 export class VehicleHasActiveTicketException extends TicketException {
   constructor(vehicleId: string) {
     super(`Vehicle with id "${vehicleId}" already has an active ticket`);

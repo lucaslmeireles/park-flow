@@ -22,6 +22,7 @@ export class PrismaParkingZoneRepository implements ParkingZoneRepository {
         operationMode: props.operationMode,
       },
       create: {
+        id: parking_zone.getId(),
         active: props.active,
         displayAddress: props.displayAddress,
         displayName: props.displayName,
@@ -94,9 +95,8 @@ export class PrismaParkingZoneRepository implements ParkingZoneRepository {
     return data.map((parking_zone) => this.toDomain(parking_zone));
   }
 
-  assignGeometry(id: string, geometry: string): Promise<void> {
-    console.log('Not implemented');
-    return;
+  async assignGeometry(id: string, geometry: string): Promise<void> {
+    await setInterval(() => console.log('Not implemented'), 100);
   }
 
   private toDomain(data: any): ParkingZone {
