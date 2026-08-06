@@ -1,23 +1,40 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
   CreateTicketCommand,
   CreateTicketUseCase,
 } from '../../application/commands/create-ticket-use-case';
-import { CreateTicketRequest } from '../../dto/request/createticket.dto';
-import {
-  CreateTicketResponse,
-  FinishTicketResponse,
-} from '../../dto/response/ticket.dto';
-import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
-import type { JwtPayload } from 'src/modules/identity/infrastructure/strategies/jwt.strategy';
-import { FinishTicketRequestDto } from '../../dto/request/finishticket.dto';
 import {
   FinishTicketCommand,
   FinishTicketUseCase,
 } from '../../application/commands/finish-ticket.usecase';
+import {
+  GetTicketsQuery,
+  GetTicketsQueryHandler,
+} from '../../application/queries/get_ticktes.query';
+import { TicketStatus } from 'src/generated/prisma/enums';
+import {
+  CreateTicketResponse,
+  FinishTicketResponse,
+  TicketResponse,
+} from '../../dto/response/ticket.dto';
+import { PaginatedResponse } from 'src/shared/dto/paginated-response.dto';
+import { CreateTicketRequest } from '../../dto/request/createticket.dto';
+import type { JwtPayload } from 'src/modules/identity/infrastructure/strategies/jwt.strategy';
+import { CurrentUser } from 'src/shared/decorators/current-user.decorator';
+import { FinishTicketRequestDto } from '../../dto/request/finishticket.dto';
 
 /**
+ *
  * TicketController
  *
  * HTTP Presentation Layer
@@ -35,8 +52,29 @@ export class TicketController {
   constructor(
     private createTicketUseCase: CreateTicketUseCase,
     private finishTicketUseCase: FinishTicketUseCase,
+    private getTicketsQueryHandler: GetTicketsQueryHandler,
   ) {}
 
+  @Get('')
+  async getTickets(
+    @Query('status') status?: string,
+  ): Promise<PaginatedResponse<TicketResponse>> {
+    if (
+      status !== undefined &&
+      !Object.values(TicketStatus).includes(status as TicketStatus)
+    ) {
+      throw new BadRequestException(
+        `status must be one of: ${Object.values(TicketStatus).join(', ')}`,
+      );
+    }
+
+    const query = new GetTicketsQuery(status as TicketStatus | undefined);
+    const tickets = await this.getTicketsQueryHandler.execute(query);
+    const ticketResponses = tickets.map((ticket) =>
+      TicketResponse.fromEntity(ticket),
+    );
+    return new PaginatedResponse(ticketResponses, ticketResponses.length);
+  }
   /**
    * POST /tickets
    * Create a new ticket

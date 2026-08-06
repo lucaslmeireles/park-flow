@@ -114,6 +114,11 @@ export class Vehicle extends Entity<VehicleProps> {
     this.setUpdatedAt(new Date());
   }
 
+  updateCategory(category: VehicleCategory): void {
+    this.category = category;
+    this.setUpdatedAt(new Date());
+  }
+
   /**
    * Assign the vehicle to an owner
    */

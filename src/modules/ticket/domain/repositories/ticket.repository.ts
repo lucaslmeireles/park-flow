@@ -1,3 +1,4 @@
+import { TicketStatus } from 'src/generated/prisma/enums';
 import { Ticket } from '../entities/ticket';
 
 /**
@@ -12,6 +13,7 @@ export interface TicketRepository {
    */
   save(ticket: Ticket): Promise<void>;
 
+  findAll(): Promise<Ticket[]>;
   /**
    * Find ticket by ID
    */
@@ -22,6 +24,7 @@ export interface TicketRepository {
    */
   findByPlate(plate: string): Promise<Ticket | null>;
 
+  findByStatus(status: TicketStatus): Promise<Ticket[]>;
   /**
    * Check if vehicle has an active ticket
    */

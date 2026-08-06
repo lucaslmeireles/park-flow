@@ -6,6 +6,7 @@ import { PrismaParkingSpotRepository } from './infrastructure/repositories/parki
 import { CreateParkingSpotUseCase } from './application/commands/create_parking_spot.usecase';
 import { PrismaOrganizationRepository } from '../organization/infrastructure/repositories/prisma-organization.repository';
 import { ParkingSpotController } from './presentation/controllers/parking_spot.controller';
+import { AssignParkingSpotGeometryUseCase } from './application/commands/assign_geometry.usecase';
 
 @Module({
   controllers: [ParkingZoneController, ParkingSpotController],
@@ -13,6 +14,7 @@ import { ParkingSpotController } from './presentation/controllers/parking_spot.c
     // Use Cases
     CreateParkingZoneUseCase,
     CreateParkingSpotUseCase,
+    AssignParkingSpotGeometryUseCase,
 
     // Repository Implementation
     {

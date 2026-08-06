@@ -1,11 +1,12 @@
 import { OperationMode } from 'src/generated/prisma/enums';
 import { Entity } from 'src/shared/domain/entity';
+import { GeoLocation } from '../value-objects/GeoLocation';
 
 interface ParkingZoneProps {
   organizationId: string;
   displayName: string;
   displayAddress: string;
-  geometry?: string;
+  geometry?: GeoLocation;
   operationMode: OperationMode;
   active: boolean;
   capacity?: number;
@@ -15,14 +16,14 @@ interface ParkingZoneProps {
 }
 
 export class ParkingZone extends Entity<ParkingZoneProps> {
-  private organizationId;
-  private displayName;
-  private displayAddress;
-  private capacity;
-  private geometry;
-  private operationMode;
-  private active;
-  private deletedAt;
+  private organizationId: string;
+  private displayName: string;
+  private displayAddress: string;
+  private operationMode: OperationMode;
+  private active: boolean;
+  private geometry?: GeoLocation;
+  private capacity?: number;
+  private deletedAt?: Date;
   constructor(id: string, props: ParkingZoneProps) {
     super(id, props.createdAt, props.updatedAt);
     this.active = props.active;

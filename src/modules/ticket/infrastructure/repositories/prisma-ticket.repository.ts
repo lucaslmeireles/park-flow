@@ -45,6 +45,11 @@ export class PrismaTicketRepository implements TicketRepository {
     });
   }
 
+  async findAll(): Promise<Ticket[]> {
+    const data = await this.prisma.ticket.findMany();
+    return data.map((ticket) => this.toDomain(ticket));
+  }
+
   async findById(id: string): Promise<Ticket | null> {
     const data = await this.prisma.ticket.findUnique({
       where: { id },
@@ -67,6 +72,14 @@ export class PrismaTicketRepository implements TicketRepository {
     }
 
     return this.toDomain(data);
+  }
+
+  async findByStatus(status: TicketStatus): Promise<Ticket[]> {
+    const data = await this.prisma.ticket.findMany({
+      where: { status },
+    });
+
+    return data.map((ticket) => this.toDomain(ticket));
   }
 
   async vehicleHasActiveTicket(vehicleId: string): Promise<boolean> {

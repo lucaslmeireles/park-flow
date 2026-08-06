@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { VehicleController } from './presentation/controllers/vehicle.controller';
 import { RegisterVehicleUseCase } from './application/commands/register-vehicle.use-case';
-import { FindVehicleByIdUseCase } from './application/queries/find-vehicle-by-id.use-case';
 import { PrismaVehicleRepository } from './infrastructure/repositories/prisma-vehicle.repository';
+import { FindVehicleByIdQuery } from './application/queries/find-vehicle-by-id.query';
 
 /**
  * VehicleModule
@@ -20,7 +20,7 @@ import { PrismaVehicleRepository } from './infrastructure/repositories/prisma-ve
   providers: [
     // Use Cases
     RegisterVehicleUseCase,
-    FindVehicleByIdUseCase,
+    FindVehicleByIdQuery,
 
     // Repository Implementation
     {

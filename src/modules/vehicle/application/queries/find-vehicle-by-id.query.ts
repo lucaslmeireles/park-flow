@@ -10,7 +10,7 @@ import { VehicleNotFoundException } from '../../domain/exceptions/vehicle.except
  * Queries don't modify state, they just return data
  */
 @Injectable()
-export class FindVehicleByIdUseCase {
+export class FindVehicleByIdQuery {
   constructor(
     @Inject('VehicleRepository')
     private vehicleRepository: VehicleRepository,

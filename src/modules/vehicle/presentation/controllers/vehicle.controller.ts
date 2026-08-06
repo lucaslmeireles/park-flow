@@ -3,12 +3,12 @@ import {
   RegisterVehicleUseCase,
   RegisterVehicleCommand,
 } from '../../application/commands/register-vehicle.use-case';
-import { FindVehicleByIdUseCase } from '../../application/queries/find-vehicle-by-id.use-case';
 import { RegisterVehicleRequest } from '../../dto/request/register-vehicle.request';
 import {
   RegisterVehicleResponse,
   VehicleResponse,
 } from '../../dto/response/vehicle.response';
+import { FindVehicleByIdQuery } from '../../application/queries/find-vehicle-by-id.query';
 
 /**
  * VehicleController
@@ -26,7 +26,7 @@ import {
 export class VehicleController {
   constructor(
     private registerVehicleUseCase: RegisterVehicleUseCase,
-    private findVehicleByIdUseCase: FindVehicleByIdUseCase,
+    private findVehicleByIdUseCase: FindVehicleByIdQuery,
   ) {}
 
   /**

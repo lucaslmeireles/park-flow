@@ -3,6 +3,10 @@ import { PrismaService } from 'src/config/database/prisma.service';
 import { ParkingSpotRepository } from '../../domain/repositories/parking_spot.repository';
 import { ParkingSpot } from '../../domain/entities/parking_spot';
 import { ParkingSpotStatus } from 'src/generated/prisma/enums';
+import { GeoLocation } from '../../domain/value-objects/GeoLocation';
+interface GeometryRow {
+  geometry_json: string | null;
+}
 
 @Injectable()
 export class PrismaParkingSpotRepository implements ParkingSpotRepository {
@@ -29,6 +33,20 @@ export class PrismaParkingSpotRepository implements ParkingSpotRepository {
         parkingZoneId: props.parkingZoneId,
       },
     });
+    if (props.geometry) {
+      await this.assignGeometryRaw(parking_spot.getId(), props.geometry);
+    }
+  }
+
+  private async assignGeometryRaw(
+    id: string,
+    geometry: GeoLocation,
+  ): Promise<void> {
+    await this.prisma.$executeRaw`
+    UPDATE parking_spots
+    SET geometry = ST_GeomFromText(${geometry.toWKT()}, 4326)
+    WHERE id = ${id}
+  `;
   }
 
   async findById(id: string): Promise<ParkingSpot | null> {
@@ -71,10 +89,6 @@ export class PrismaParkingSpotRepository implements ParkingSpotRepository {
     }
 
     return data.map((parking_spot) => this.toDomain(parking_spot));
-  }
-
-  async assignGeometry(id: string, geometry: string): Promise<void> {
-    await console.log('Não implementei');
   }
 
   private toDomain(data: any): ParkingSpot {

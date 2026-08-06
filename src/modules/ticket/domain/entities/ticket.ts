@@ -129,6 +129,18 @@ export class Ticket extends Entity<TicketProps> {
     this.setUpdatedAt(new Date());
   }
 
+  cancelTicket(): void {
+    if (
+      this.status !== TicketStatus.ACTIVE &&
+      this.status !== TicketStatus.SCHEDULED
+    ) {
+      throw new Error('Cannot cancel a ticket that is not active');
+    }
+    this.status = TicketStatus.CANCELLED;
+    this.endedAt = new Date();
+    this.setUpdatedAt(new Date());
+  }
+
   assignVehicle(vehicleId: string): void {
     if (this.vehicleId) {
       throw new Error('Ticket is already assigned to a vehicle');

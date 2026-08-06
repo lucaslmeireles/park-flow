@@ -4,6 +4,7 @@ import { CreateTicketUseCase } from './application/commands/create-ticket-use-ca
 import { PrismaTicketRepository } from './infrastructure/repositories/prisma-ticket.repository';
 import { OrganizationModule } from '../organization/organization.module';
 import { FinishTicketUseCase } from './application/commands/finish-ticket.usecase';
+import { GetTicketsQueryHandler } from './application/queries/get_ticktes.query';
 
 /**
  * VehicleModule
@@ -23,7 +24,7 @@ import { FinishTicketUseCase } from './application/commands/finish-ticket.usecas
     // Use Cases
     CreateTicketUseCase,
     FinishTicketUseCase,
-
+    GetTicketsQueryHandler,
     // Repository Implementation
     {
       provide: 'TicketRepository',
